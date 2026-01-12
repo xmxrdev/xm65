@@ -1,7 +1,7 @@
 TARGET = xm65
 
 CC = cc
-CFLAGS = -Wall -Wextra -Wpedantic -Iinclude
+CFLAGS = -std=c99 -Wall -Wextra -Wpedantic -Iinclude
 
 DIR_INCLUDE := include
 DIR_SRC := src
