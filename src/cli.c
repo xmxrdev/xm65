@@ -5,6 +5,20 @@
 
 #include "cli.h"
 
+const char *options[] = {
+    "--emulate",
+    "--debug", "--assemble",
+    "--config",
+    "--version",
+    "--help",
+    NULL,
+};
+
+const char *error_strings[] = {
+    "Target undefined. Please select a `.asm` or `.bin` file.",
+    "No target files.",
+};
+
 bool str_ends_with(const char *str, const char *suffix) {
     if (!str || !suffix)
         return false;
@@ -18,15 +32,15 @@ bool str_ends_with(const char *str, const char *suffix) {
     return strcmp(str + len_str - len_suf, suffix) == 0;
 }
 
-int error(size_t code) {
+int XM65_ThrowError(size_t code) {
     printf("ERROR: %s\n", error_strings[code]);
     printf("Use `xm65 --help E%zu` for more information.\n", code);
     return 1;
 }
 
-int parse_arguments(int argc, char *argv[]) {
-    cli.target = NULL;
-    cli.flags = CLI_NO_FLAGS;
+int XM65_ParseArguments(int argc, char *argv[], XM65_Cli *cli) {
+    cli->target = NULL;
+    cli->flags = XM65_CLI_NO_FLAGS;
 
     // Argument parser
     for (int i = 1; i < argc; i++) {
@@ -39,7 +53,7 @@ int parse_arguments(int argc, char *argv[]) {
             while (option_str != NULL) {
                 int cmp = strcmp(option_str, arg);
 
-                if (cmp == 0) cli.flags |= 1 << option;
+                if (cmp == 0) cli->flags |= 1 << option;
 
                 option_str = options[++option];
             }
@@ -48,10 +62,12 @@ int parse_arguments(int argc, char *argv[]) {
             bool target_bin = str_ends_with(arg, ".bin");
 
             if (target_asm || target_bin) {
-                if (cli.flags & CLI_TARGET_CHOSEN) return error(0);
+                if (cli->flags & XM65_CLI_TARGET_CHOSEN) return XM65_ThrowError(0);
 
-                cli.flags |= CLI_TARGET_CHOSEN;
-                cli.target = arg;
+                cli->flags |= XM65_CLI_TARGET_CHOSEN;
+                cli->target = arg;
+
+                printf("Chosen target: %s\n", arg);
             }
         }
     }
