@@ -16,6 +16,14 @@ enum {
     XM65_FLAG_N = 1u << 7,
 };
 
+enum {
+    XM65_VECTOR_INTERRUPT = 0xFFFE,
+    XM65_VECTOR_RESET     = 0xFFFC,
+    XM65_VECTOR_NMI       = 0xFFFA,
+    // XM65_VECTOR_ABORT     = 0xFFF8,
+    // XM65_VECTOR_COP       = 0xFFF4,
+};
+
 typedef struct XM65_6502 {
     uint8_t a, x, y, sp, p;
     uint16_t pc;
@@ -34,6 +42,7 @@ typedef struct XM65_VM {
 } XM65_VM;
 
 void XM65_PrintCPU(XM65_VM*);
+void XM65_Power_VM(XM65_VM*);
 void XM65_ResetVM(XM65_VM*);
 void XM65_UpdateFlags(XM65_VM*, uint8_t, uint8_t, uint16_t);
 void XM65_RunVM(XM65_VM*);
