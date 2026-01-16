@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #include "cli.h"
 
@@ -17,6 +18,8 @@ const char *options[] = {
 const char *error_strings[] = {
     "Target undefined. Please select a `.asm` or `.bin` file.",
     "No target files.",
+    "Failed to open file: '%s'.",
+    "Failed to allocate memory.",
 };
 
 bool str_ends_with(const char *str, const char *suffix) {
@@ -32,8 +35,18 @@ bool str_ends_with(const char *str, const char *suffix) {
     return strcmp(str + len_str - len_suf, suffix) == 0;
 }
 
-int XM65_ThrowError(size_t code) {
-    printf("ERROR: %s\n", error_strings[code]);
+int XM65_ThrowError(size_t code, ...) {
+    va_list args;
+
+    fputs("ERROR: ", stdout);
+
+    va_start(args, code);
+    vprintf(error_strings[code], args);
+    va_end(args);
+
+    fputs("\n", stdout);
+
+
     printf("Use `xm65 --help E%zu` for more information.\n", code);
     return 1;
 }

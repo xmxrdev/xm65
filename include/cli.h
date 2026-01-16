@@ -26,5 +26,5 @@ typedef struct XM65_Cli {
 } XM65_Cli;
 
 bool str_ends_with(const char*, const char*);
-int XM65_ThrowError(size_t code);
+int XM65_ThrowError(size_t code, ...);
 int XM65_ParseArguments(int, char* [], XM65_Cli*);

@@ -22,6 +22,21 @@ uint16_t XM65_ReadVector(XM65_VM *vm, uint16_t lo) {
     return vm->ram.data[lo] | (vm->ram.data[lo + 1] << 8);
 }
 
+int XM65_ProgramVM(XM65_VM *vm, const char *filename) {
+    char *file = NULL; long filesize;
+    XM65_OpenFile(filename, &file, &filesize);
+    
+    for (int i = 0; i < filesize - (2 * 3); i++) {
+        printf("%X ", (uint8_t) file[i]);
+    }
+
+    puts("");
+
+    XM65_CloseFile(file);
+
+    return 0;
+}
+
 void XM65_Power_VM(XM65_VM *vm) {
     /// Simulating undefined state of CPU registers and RAM contents
     // Randomize CPU registers
