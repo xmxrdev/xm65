@@ -16,8 +16,16 @@ int main(int argc, char *argv[]) {
     // TESTING & DEBUGGING
     XM65_VM vm;
     XM65_Power_VM(&vm);
-
     XM65_ProgramVM(&vm, cli.target);
+    XM65_ResetVM(&vm);
+
+    vm.cpu.pc = 0x200; // Just to avoid RESET routine
+
+    XM65_PrintCPU(&vm);
+    XM65_RunVM(&vm); XM65_PrintCPU(&vm);
+    XM65_RunVM(&vm); XM65_PrintCPU(&vm);
+    XM65_RunVM(&vm); XM65_PrintCPU(&vm);
+    XM65_RunVM(&vm); XM65_PrintCPU(&vm);
 
     //
     // // Vector settings

@@ -6,7 +6,7 @@
 #include "utils.h"
 
 void XM65_PrintCPU(XM65_VM *vm) {
-    printf("A=$%X X=$%X Y=$%X\nSP=$%X PC=$%X\nNV-BDIZC\n%s (0x%X)\n\n", vm->cpu.a, vm->cpu.x, vm->cpu.y, vm->cpu.sp, vm->cpu.pc, XM65_ByteToBin(vm->cpu.p), vm->cpu.p);
+    printf("A=$%X X=$%X Y=$%X\nSP=$%X PC=$%X D=$%X\nNV-BDIZC\n%s (0x%X)\n\n", vm->cpu.a, vm->cpu.x, vm->cpu.y, vm->cpu.sp, vm->cpu.pc, vm->ram.data[vm->cpu.pc], XM65_ByteToBin(vm->cpu.p), vm->cpu.p);
 }
 
 void XM65_UpdateFlags(XM65_VM *vm, uint8_t M, uint8_t R, uint16_t RV) {
@@ -19,18 +19,48 @@ void XM65_UpdateFlags(XM65_VM *vm, uint8_t M, uint8_t R, uint16_t RV) {
 }
 
 uint16_t XM65_ReadVector(XM65_VM *vm, uint16_t lo) {
-    return vm->ram.data[lo] | (vm->ram.data[lo + 1] << 8);
+    uint16_t r = vm->ram.data[lo] | (vm->ram.data[lo + 1] << 8);
+
+    printf("* XM65_ReadVector: Reading from %u - +1 (%X %X)\n", (unsigned int) lo, vm->ram.data[lo+1], vm->ram.data[lo]);
+
+    return r;
 }
 
 int XM65_ProgramVM(XM65_VM *vm, const char *filename) {
     char *file = NULL; long filesize;
     XM65_OpenFile(filename, &file, &filesize);
-    
-    for (int i = 0; i < filesize - (2 * 3); i++) {
-        printf("%X ", (uint8_t) file[i]);
+
+    // Copying PRG memory
+    int i = 0;
+    int interrupt_start = filesize - 6 /* vector region size */;
+
+    printf("* XM65_ProgramVM: Filesize: %lu\n", filesize);
+    printf("* XM65_ProgramVM: Interrupt Start: %i\n", interrupt_start);
+
+    while (i < interrupt_start) {
+        vm->ram.data[0x0200 + i] = file[i];
+        i++;
     }
 
-    puts("");
+    // Copying VECTOR memory
+    vm->ram.data[XM65_VECTOR_IRQ     ] = file[interrupt_start +0];
+    vm->ram.data[XM65_VECTOR_IRQ   +1] = file[interrupt_start +1];
+    vm->ram.data[XM65_VECTOR_RESET   ] = file[interrupt_start +2];
+    vm->ram.data[XM65_VECTOR_RESET +1] = file[interrupt_start +3];
+    vm->ram.data[XM65_VECTOR_NMI     ] = file[interrupt_start +4];
+    vm->ram.data[XM65_VECTOR_NMI   +1] = file[interrupt_start +5];
+
+    fputs("PRG: ", stdout);
+    for (int i = 0; i < interrupt_start; i++) {
+        printf("%X ", vm->ram.data[0x0200 + i]);
+    }
+
+    fputs("\nVECTOR: ", stdout);
+    for (int i = 0; i < 6 /* vector region size */; i++) {
+        printf("%X ", vm->ram.data[XM65_VECTOR_IRQ + i]);
+    }
+
+    fputs("\n", stdout);
 
     XM65_CloseFile(file);
 
@@ -55,6 +85,7 @@ void XM65_Power_VM(XM65_VM *vm) {
 void XM65_ResetVM(XM65_VM *vm) {
     // Internal reset, no bus access +3 cycles
     vm->cpu.pc = XM65_ReadVector(vm, XM65_VECTOR_RESET); // +3 cycles
+    printf("* XM65_ResetVM: %u\n", (unsigned int) vm->cpu.pc);
 
     // Set interrupt disable flag: disable IRQ's, then continue
     vm->cpu.p |= XM65_FLAG_U | XM65_FLAG_B;
@@ -63,53 +94,3 @@ void XM65_ResetVM(XM65_VM *vm) {
     vm->cpu.cycles = 6;
 }
 
-void XM65_RunVM(XM65_VM *vm) {
-    uint8_t  fetch = vm->ram.data[vm->cpu.pc++]; // +1 cycle (fetch)
-    uint8_t  M, R;
-    uint16_t RV;
-
-    switch (fetch) {
-        case 0x00: {
-            vm->cpu.pc += 1; // +1 cycle
-            vm->ram.data[0x0100 | vm->cpu.sp--] = (vm->cpu.pc & 0xFF00) >> 8; // +1 cycle
-            vm->ram.data[0x0100 | vm->cpu.sp--] = (vm->cpu.pc & 0x00FF); // +1 cycle
-            vm->ram.data[0x0100 | vm->cpu.sp--] = (vm->cpu.p | XM65_FLAG_B | XM65_FLAG_U); // +1 cycle
-            // vm->cpu.p |= XM65_FLAG_I; // (65C02)
-            vm->cpu.pc = XM65_ReadVector(vm, XM65_VECTOR_INTERRUPT); // +2 cycles
-            
-            vm->cpu.cycles += 6;
-            break;
-        }
-        case 0x18: {
-            vm->cpu.p &= ~(XM65_FLAG_C); // +1 cycles
-            vm->cpu.cycles += 1;
-            break;
-        }
-        case 0x38: {
-            vm->cpu.p |= XM65_FLAG_C; // +1 cycles
-            vm->cpu.cycles += 1;
-            break;
-        }
-        case 0xEA: {
-            vm->cpu.cycles += 1; // +1 cycles
-            break;
-        }
-        case 0x69: {
-            M = vm->ram.data[vm->cpu.pc++]; // +1 cycle
-            RV = vm->cpu.a + M + ((vm->cpu.p & XM65_FLAG_C) ? 1 : 0);
-            R = (uint8_t) RV;
-
-            // Update flags
-            XM65_UpdateFlags(vm, M, R, RV);
-
-            vm->cpu.a = R;
-
-            vm->cpu.cycles += 1;
-            break;
-        }
-        default:
-            break;
-    }
-
-    vm->cpu.cycles++;
-}
