@@ -43,5 +43,5 @@ int XM65_OpenFile(const char *filename, char **buffer, long *filesize) {
 }
 
 void XM65_CloseFile(char *buffer) {
-    free(buffer);
+    if (buffer) free(buffer);
 }

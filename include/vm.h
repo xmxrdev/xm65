@@ -24,6 +24,12 @@ enum {
     // XM65_VECTOR_COP       = 0xFFF4,
 };
 
+typedef enum {
+    XM65_VM_STATUS_IDLE,
+    XM65_VM_STATUS_RUNNING,
+    XM65_VM_STATUS_INTERRUPTED,
+} XM65_VM_STATUS;
+
 typedef struct XM65_6502 {
     uint8_t a, x, y, sp, p;
     uint16_t pc;
@@ -37,8 +43,7 @@ typedef struct XM65_RAM {
 typedef struct XM65_VM {
     XM65_RAM ram;
     XM65_6502 cpu;
-
-    bool running;
+    XM65_VM_STATUS status;
 } XM65_VM;
 
 void XM65_PrintCPU(XM65_VM*);
@@ -47,4 +52,6 @@ uint16_t XM65_ReadVector(XM65_VM*, uint16_t);
 int XM65_ProgramVM(XM65_VM*, const char*);
 void XM65_Power_VM(XM65_VM*);
 void XM65_ResetVM(XM65_VM*);
-void XM65_RunVM(XM65_VM*);
+XM65_VM_STATUS XM65_RunVM(XM65_VM*);
+void XM65_StackPush(XM65_VM*, uint8_t);
+uint8_t XM65_StackPull(XM65_VM*);

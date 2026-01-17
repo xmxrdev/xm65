@@ -19,23 +19,24 @@ void XM65_UpdateFlags(XM65_VM *vm, uint8_t M, uint8_t R, uint16_t RV) {
 }
 
 uint16_t XM65_ReadVector(XM65_VM *vm, uint16_t lo) {
-    uint16_t r = vm->ram.data[lo] | (vm->ram.data[lo + 1] << 8);
+    return vm->ram.data[lo] | (vm->ram.data[lo + 1] << 8);
+}
 
-    printf("* XM65_ReadVector: Reading from %u - +1 (%X %X)\n", (unsigned int) lo, vm->ram.data[lo+1], vm->ram.data[lo]);
+void XM65_StackPush(XM65_VM *vm, uint8_t value) {
+    vm->ram.data[0x0100 + vm->cpu.sp--] = value;
+}
 
-    return r;
+uint8_t XM65_StackPull(XM65_VM *vm) {
+    return vm->ram.data[0x0100 + ++vm->cpu.sp];
 }
 
 int XM65_ProgramVM(XM65_VM *vm, const char *filename) {
     char *file = NULL; long filesize;
-    XM65_OpenFile(filename, &file, &filesize);
+    if(XM65_OpenFile(filename, &file, &filesize) != 0) return 1;
 
     // Copying PRG memory
     int i = 0;
     int interrupt_start = filesize - 6 /* vector region size */;
-
-    printf("* XM65_ProgramVM: Filesize: %lu\n", filesize);
-    printf("* XM65_ProgramVM: Interrupt Start: %i\n", interrupt_start);
 
     while (i < interrupt_start) {
         vm->ram.data[0x0200 + i] = file[i];
@@ -49,18 +50,6 @@ int XM65_ProgramVM(XM65_VM *vm, const char *filename) {
     vm->ram.data[XM65_VECTOR_RESET +1] = file[interrupt_start +3];
     vm->ram.data[XM65_VECTOR_NMI     ] = file[interrupt_start +4];
     vm->ram.data[XM65_VECTOR_NMI   +1] = file[interrupt_start +5];
-
-    fputs("PRG: ", stdout);
-    for (int i = 0; i < interrupt_start; i++) {
-        printf("%X ", vm->ram.data[0x0200 + i]);
-    }
-
-    fputs("\nVECTOR: ", stdout);
-    for (int i = 0; i < 6 /* vector region size */; i++) {
-        printf("%X ", vm->ram.data[XM65_VECTOR_IRQ + i]);
-    }
-
-    fputs("\n", stdout);
 
     XM65_CloseFile(file);
 
@@ -85,12 +74,13 @@ void XM65_Power_VM(XM65_VM *vm) {
 void XM65_ResetVM(XM65_VM *vm) {
     // Internal reset, no bus access +3 cycles
     vm->cpu.pc = XM65_ReadVector(vm, XM65_VECTOR_RESET); // +3 cycles
-    printf("* XM65_ResetVM: %u\n", (unsigned int) vm->cpu.pc);
 
     // Set interrupt disable flag: disable IRQ's, then continue
     vm->cpu.p |= XM65_FLAG_U | XM65_FLAG_B;
 
     // Reset cpu cycles counter
     vm->cpu.cycles = 6;
+
+    vm->status = XM65_VM_STATUS_IDLE;
 }
 
