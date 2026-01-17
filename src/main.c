@@ -7,7 +7,7 @@ int main(int argc, char *argv[]) {
     XM65_Cli cli;
     XM65_ParseArguments(argc, argv, &cli);
 
-    if (cli.target == NULL) return XM65_ThrowError(1);
+    if (cli.target == NULL) XM65_ThrowError(XM65_ERROR_NO_TARGETS);
 
     printf("INFO: Target file: %s\n", cli.target);
     printf("INFO: Flags: %zu\n", (size_t) cli.flags);

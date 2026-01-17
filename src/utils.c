@@ -15,9 +15,7 @@ char* XM65_ByteToBin(uint8_t byte) {
 
 int XM65_OpenFile(const char *filename, char **buffer, long *filesize) {
     FILE *file = fopen(filename, "rb");
-    if (!file) {
-        return XM65_ThrowError(2, filename);
-    }
+    if (!file) XM65_ThrowError(XM65_ERROR_FILE_OPEN, filename);
 
     fseek(file, 0, SEEK_END);
     *filesize = ftell(file);
@@ -26,15 +24,14 @@ int XM65_OpenFile(const char *filename, char **buffer, long *filesize) {
     *buffer = (char *) malloc(*filesize);
     if (!*buffer) {
         fclose(file);
-        return XM65_ThrowError(3);
+        XM65_ThrowError(XM65_ERROR_MEM_ALLOC);
     }
 
     size_t read_bytes = fread(*buffer, 1, *filesize, file);
     if ((long) read_bytes != *filesize) {
-        perror("Failed to read file completely");
         free(*buffer);
         fclose(file);
-        return 1;
+        XM65_ThrowError(XM65_ERROR_FILE_READ, filename);
     }
 
     fclose(file);

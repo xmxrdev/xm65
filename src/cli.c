@@ -3,12 +3,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdlib.h>
 
 #include "cli.h"
 
 const char *options[] = {
     "--emulate",
-    "--debug", "--assemble",
+    "--debug",
     "--config",
     "--version",
     "--help",
@@ -16,10 +17,11 @@ const char *options[] = {
 };
 
 const char *error_strings[] = {
-    "Target undefined. Please select a `.asm` or `.bin` file.",
     "No target files.",
+    "Target undefined. Please specify a `.bin` file.",
     "Failed to open file: '%s'.",
     "Failed to allocate memory.",
+    "Failed to read file '%s' completely.",
 };
 
 bool str_ends_with(const char *str, const char *suffix) {
@@ -35,20 +37,19 @@ bool str_ends_with(const char *str, const char *suffix) {
     return strcmp(str + len_str - len_suf, suffix) == 0;
 }
 
-int XM65_ThrowError(size_t code, ...) {
+void XM65_ThrowError(enum XM65_ERROR_CODE code, ...) {
     va_list args;
 
-    fputs("ERROR: ", stdout);
+    fputs("ERROR: ", stderr);
 
     va_start(args, code);
-    vprintf(error_strings[code], args);
+    vfprintf(stderr, error_strings[code], args);
     va_end(args);
 
-    fputs("\n", stdout);
+    fputs("\n", stderr);
 
-
-    printf("Use `xm65 --help E%zu` for more information.\n", code);
-    return 1;
+    printf("Use `xm65 --help E%u` for more information.\n", code);
+    exit(1);
 }
 
 int XM65_ParseArguments(int argc, char *argv[], XM65_Cli *cli) {
@@ -58,7 +59,6 @@ int XM65_ParseArguments(int argc, char *argv[], XM65_Cli *cli) {
     // Argument parser
     for (int i = 1; i < argc; i++) {
         char *arg = argv[i];
-        
         if (arg[0] == '-') {
             size_t option = 0;
             const char* option_str = options[option];
@@ -71,16 +71,13 @@ int XM65_ParseArguments(int argc, char *argv[], XM65_Cli *cli) {
                 option_str = options[++option];
             }
         } else {
-            bool target_asm = str_ends_with(arg, ".asm");
             bool target_bin = str_ends_with(arg, ".bin");
 
-            if (target_asm || target_bin) {
-                if (cli->flags & XM65_CLI_TARGET_CHOSEN) return XM65_ThrowError(0);
+            if (target_bin) {
+                if (cli->flags & XM65_CLI_TARGET_CHOSEN) XM65_ThrowError(XM65_ERROR_TARGET_UNDEFINED);
 
                 cli->flags |= XM65_CLI_TARGET_CHOSEN;
                 cli->target = arg;
-
-                printf("Chosen target: %s\n", arg);
             }
         }
     }
