@@ -17,9 +17,9 @@ enum {
 };
 
 enum {
-    XM65_VECTOR_IRQ   = 0xFFFE,
-    XM65_VECTOR_RESET = 0xFFFC,
     XM65_VECTOR_NMI   = 0xFFFA,
+    XM65_VECTOR_RESET = 0xFFFC,
+    XM65_VECTOR_IRQ   = 0xFFFE,
     // XM65_VECTOR_ABORT     = 0xFFF8,
     // XM65_VECTOR_COP       = 0xFFF4,
 };

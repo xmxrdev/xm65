@@ -34,22 +34,21 @@ int XM65_ProgramVM(XM65_VM *vm, const char *filename) {
     char *file = NULL; long filesize;
     if(XM65_OpenFile(filename, &file, &filesize) != 0) return 1;
 
-    // Copying PRG memory
-    int i = 0;
-    int interrupt_start = filesize - 6 /* vector region size */;
-
-    while (i < interrupt_start) {
-        vm->ram.data[0x0200 + i] = file[i];
-        i++;
+    // Copying PRG memory (excluding last 6 bytes for vectors)
+    int program_size = filesize - 6;
+    if (program_size > 0) {
+        for (int i = 0; i < program_size; i++) {
+            vm->ram.data[0x0200 + i] = file[i];
+        }
     }
 
     // Copying VECTOR memory
-    vm->ram.data[XM65_VECTOR_IRQ     ] = file[interrupt_start +0];
-    vm->ram.data[XM65_VECTOR_IRQ   +1] = file[interrupt_start +1];
-    vm->ram.data[XM65_VECTOR_RESET   ] = file[interrupt_start +2];
-    vm->ram.data[XM65_VECTOR_RESET +1] = file[interrupt_start +3];
-    vm->ram.data[XM65_VECTOR_NMI     ] = file[interrupt_start +4];
-    vm->ram.data[XM65_VECTOR_NMI   +1] = file[interrupt_start +5];
+    vm->ram.data[XM65_VECTOR_IRQ     ] = file[program_size +0];
+    vm->ram.data[XM65_VECTOR_IRQ   +1] = file[program_size +1];
+    vm->ram.data[XM65_VECTOR_RESET   ] = file[program_size +2];
+    vm->ram.data[XM65_VECTOR_RESET +1] = file[program_size +3];
+    vm->ram.data[XM65_VECTOR_NMI     ] = file[program_size +4];
+    vm->ram.data[XM65_VECTOR_NMI   +1] = file[program_size +5];
 
     XM65_CloseFile(file);
 

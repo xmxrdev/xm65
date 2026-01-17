@@ -1,5 +1,7 @@
 .setcpu "6502"
 
+.org $0200
+
 lda #$FF
 clc
 adc #$01 ; Expecting 0x00
@@ -15,6 +17,7 @@ RESET:
     ldx #$ff
     txs
     cli
+    jmp $0200
 
 NMI:
     rti
@@ -24,10 +27,6 @@ IRQ:
 
 ; TOTAL: 13 instructions
 
-; Vectors
 .word NMI
 .word RESET
 .word IRQ
-
-; Assemble & Link
-; ca65 test03.asm; cl65 -t none -C memory.cfg test03.asm -o test03.bin

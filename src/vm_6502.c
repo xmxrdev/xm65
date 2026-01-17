@@ -43,6 +43,12 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        vm->cpu.cycles += 6;
                        break;
                    }
+        case 0x4C: {
+                       vm->cpu.pc = XM65_ReadVector(vm, vm->cpu.pc); // +2 cycles
+           
+                       vm->cpu.cycles += 3;
+                       break;
+                   }
         case 0x58: {
                        vm->cpu.p &= ~(XM65_FLAG_I); // +1 cycles
 
