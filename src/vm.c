@@ -9,7 +9,7 @@ void XM65_PrintCPU(XM65_VM *vm) {
     printf("A=$%X X=$%X Y=$%X\nSP=$%X PC=$%X D=$%X\nNV-BDIZC\n%s (0x%X)\n\n", vm->cpu.a, vm->cpu.x, vm->cpu.y, vm->cpu.sp, vm->cpu.pc, vm->ram.data[vm->cpu.pc], XM65_ByteToBin(vm->cpu.p), vm->cpu.p);
 }
 
-void XM65_UpdateFlags(XM65_VM *vm, uint8_t M, uint8_t R, uint16_t RV) {
+void XM65_UpdateFlags(XM65_VM *vm, uint16_t M, uint8_t R, uint16_t RV) {
     vm->cpu.p &= ~(XM65_FLAG_C | XM65_FLAG_Z | XM65_FLAG_V | XM65_FLAG_N);
 
     if (RV > 0xFF)                                          vm->cpu.p |= XM65_FLAG_C;
@@ -20,6 +20,18 @@ void XM65_UpdateFlags(XM65_VM *vm, uint8_t M, uint8_t R, uint16_t RV) {
 
 uint16_t XM65_ReadVector(XM65_VM *vm, uint16_t lo) {
     return vm->ram.data[lo] | (vm->ram.data[lo + 1] << 8);
+}
+
+uint8_t XM65_ReadOperand(XM65_VM *vm) {
+    return vm->ram.data[vm->cpu.pc++];
+}
+
+uint16_t XM65_AddCarry(XM65_VM *vm, uint8_t M) {
+    return vm->cpu.a + M + ((vm->cpu.p & XM65_FLAG_C) ? 1 : 0);
+}
+
+uint16_t XM65_SubstractCarry(XM65_VM *vm, uint8_t M) {
+    return vm->cpu.a - M - ((vm->cpu.p & XM65_FLAG_C) ? 0 : 1);
 }
 
 void XM65_StackPush(XM65_VM *vm, uint8_t value) {
