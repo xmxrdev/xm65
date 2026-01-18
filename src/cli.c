@@ -9,7 +9,6 @@
 
 const char *options[] = {
     "--emulate",
-    "--debug",
     "--config",
     "--version",
     "--help",
@@ -76,7 +75,7 @@ int XM65_ParseArguments(int argc, char *argv[], XM65_Cli *cli) {
             if (target_bin) {
                 if (cli->flags & XM65_CLI_TARGET_CHOSEN) XM65_ThrowError(XM65_ERROR_TARGET_UNDEFINED);
 
-                cli->flags |= XM65_CLI_TARGET_CHOSEN;
+                cli->flags |= XM65_CLI_TARGET_CHOSEN | XM65_CLI_EMULATE_TARGET;
                 cli->target = arg;
             }
         }

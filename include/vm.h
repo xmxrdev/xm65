@@ -49,7 +49,7 @@ typedef struct XM65_VM {
 void XM65_PrintCPU(XM65_VM*);
 void XM65_UpdateFlags(XM65_VM*, uint8_t, uint8_t, uint16_t);
 uint16_t XM65_ReadVector(XM65_VM*, uint16_t);
-int XM65_ProgramVM(XM65_VM*, const char*);
+void XM65_ProgramVM(XM65_VM*, const char*);
 void XM65_Power_VM(XM65_VM*);
 void XM65_ResetVM(XM65_VM*);
 XM65_VM_STATUS XM65_RunVM(XM65_VM*);

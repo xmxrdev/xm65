@@ -13,7 +13,19 @@ char* XM65_ByteToBin(uint8_t byte) {
     return bits;
 }
 
-int XM65_OpenFile(const char *filename, char **buffer, long *filesize) {
+bool XM65_CanReadFile(const char *filename) {
+    if (!filename) return false;
+
+    FILE *file = fopen(filename, "rb");
+
+    if (!file) return false;
+
+    fclose(file);
+
+    return true;
+}
+
+void XM65_OpenFile(const char *filename, char **buffer, long *filesize) {
     FILE *file = fopen(filename, "rb");
     if (!file) XM65_ThrowError(XM65_ERROR_FILE_OPEN, filename);
 
@@ -35,8 +47,6 @@ int XM65_OpenFile(const char *filename, char **buffer, long *filesize) {
     }
 
     fclose(file);
-
-    return 0;
 }
 
 void XM65_CloseFile(char *buffer) {

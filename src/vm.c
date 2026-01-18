@@ -30,9 +30,9 @@ uint8_t XM65_StackPull(XM65_VM *vm) {
     return vm->ram.data[0x0100 + ++vm->cpu.sp];
 }
 
-int XM65_ProgramVM(XM65_VM *vm, const char *filename) {
+void XM65_ProgramVM(XM65_VM *vm, const char *filename) {
     char *file = NULL; long filesize;
-    if(XM65_OpenFile(filename, &file, &filesize) != 0) return 1;
+    XM65_OpenFile(filename, &file, &filesize);
 
     // Copying PRG memory (excluding last 6 bytes for vectors)
     int program_size = filesize - 6;
@@ -51,8 +51,6 @@ int XM65_ProgramVM(XM65_VM *vm, const char *filename) {
     vm->ram.data[XM65_VECTOR_NMI   +1] = file[program_size +5];
 
     XM65_CloseFile(file);
-
-    return 0;
 }
 
 void XM65_Power_VM(XM65_VM *vm) {
