@@ -1,4 +1,4 @@
-#include "vm.h"
+#include "xm65/vm.h"
 
 XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
     if (vm->status == XM65_VM_STATUS_INTERRUPTED) return vm->status;
@@ -13,8 +13,8 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
     switch (fetch) {
         case 0x00: {
                        vm->cpu.pc += 1;
-                       XM65_StackPush(vm, (vm->cpu.pc & 0xFF00) >> 8);
-                       XM65_StackPush(vm, (vm->cpu.pc & 0x00FF));
+                       XM65_StackPush(vm, (uint8_t)(vm->cpu.pc & 0xFF00) >> 8);
+                       XM65_StackPush(vm, (uint8_t)(vm->cpu.pc & 0x00FF));
                        XM65_StackPush(vm, (vm->cpu.p | XM65_FLAG_B | XM65_FLAG_U));
                        // vm->cpu.p |= XM65_FLAG_I; // (65C02)
                        vm->cpu.pc = XM65_ReadVector(vm, XM65_VECTOR_IRQ);
@@ -25,7 +25,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        break;
                    }
         case 0x18: {
-                       vm->cpu.p &= ~(XM65_FLAG_C);
+                       vm->cpu.p &= (uint8_t) ~(XM65_FLAG_C);
 
                        vm->cpu.cycles += 2;
                        break;
@@ -51,7 +51,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        break;
                    }
         case 0x58: {
-                       vm->cpu.p &= ~(XM65_FLAG_I);
+                       vm->cpu.p &= (uint8_t) ~(XM65_FLAG_I);
 
                        vm->cpu.cycles += 2;
                        break;
@@ -62,7 +62,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        uint16_t E = vm->ram.data[M] | vm->ram.data[(M + 1) & 0xFF] << 8;
                        M = vm->ram.data[E];
 
-                       RV = XM65_AddCarry(vm, M);
+                       RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
 
                        XM65_UpdateFlags(vm, M, R, RV);
@@ -77,7 +77,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        M = XM65_ReadOperand(vm);
                        M = vm->ram.data[M];
 
-                       RV = XM65_AddCarry(vm, M);
+                       RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
 
                        vm->cpu.a = R;
@@ -87,7 +87,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                    }
         case 0x69: {
                        M = XM65_ReadOperand(vm);
-                       RV = XM65_AddCarry(vm, M);
+                       RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
            
                        XM65_UpdateFlags(vm, M, R, RV);
@@ -102,7 +102,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        M |= XM65_ReadOperand(vm) << 8;
                        M = vm->ram.data[M];
 
-                       RV = XM65_AddCarry(vm, M);
+                       RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
 
                        XM65_UpdateFlags(vm, M, R, RV);
@@ -122,7 +122,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
                        M = vm->ram.data[MO];
 
-                       RV = XM65_AddCarry(vm, M);
+                       RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
 
                        XM65_UpdateFlags(vm, M, R, RV);
@@ -137,7 +137,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        M = XM65_ReadOperand(vm);
                        M = vm->ram.data[M + vm->cpu.x];
 
-                       RV = XM65_AddCarry(vm, M);
+                       RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
 
                        XM65_UpdateFlags(vm, M, R, RV);
@@ -163,7 +163,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
                        M = vm->ram.data[MO];
 
-                       RV = XM65_AddCarry(vm, M);
+                       RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
 
                        XM65_UpdateFlags(vm, M, R, RV);
@@ -183,7 +183,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
                        M = vm->ram.data[MO];
 
-                       RV = XM65_AddCarry(vm, M);
+                       RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
 
                        XM65_UpdateFlags(vm, M, R, RV);
@@ -205,25 +205,25 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        break;
                    }
         case 0xD8: {
-                       vm->cpu.p &= ~(XM65_FLAG_D);
+                       vm->cpu.p &= (uint8_t) ~(XM65_FLAG_D);
 
                        vm->cpu.cycles += 2;
                        break;
                    }
         case 0xA2: {
                        M = XM65_ReadOperand(vm);
-                       vm->cpu.x = M;
+                       vm->cpu.x = (uint8_t) M;
            
-                       XM65_UpdateFlags(vm, M, M, RV);
+                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV);
 
                        vm->cpu.cycles += 2;
                        break;
                    }
         case 0xA9: {
                        M = XM65_ReadOperand(vm);
-                       vm->cpu.a = M;
+                       vm->cpu.a = (uint8_t) M;
            
-                       XM65_UpdateFlags(vm, M, M, RV);
+                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV);
            
                        vm->cpu.cycles += 2;
                        break;

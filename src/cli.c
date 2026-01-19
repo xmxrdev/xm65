@@ -5,7 +5,7 @@
 #include <stdarg.h>
 #include <stdlib.h>
 
-#include "cli.h"
+#include "xm65/cli.h"
 
 const char *options[] = {
     "--emulate",

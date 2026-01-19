@@ -2,15 +2,15 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include "vm.h"
-#include "utils.h"
+#include "xm65/vm.h"
+#include "xm65/utils.h"
 
 void XM65_PrintCPU(XM65_VM *vm) {
     printf("A=$%X X=$%X Y=$%X\nSP=$%X PC=$%X D=$%X\nNV-BDIZC\n%s (0x%X)\n\n", vm->cpu.a, vm->cpu.x, vm->cpu.y, vm->cpu.sp, vm->cpu.pc, vm->ram.data[vm->cpu.pc], XM65_ByteToBin(vm->cpu.p), vm->cpu.p);
 }
 
 void XM65_UpdateFlags(XM65_VM *vm, uint16_t M, uint8_t R, uint16_t RV) {
-    vm->cpu.p &= ~(XM65_FLAG_C | XM65_FLAG_Z | XM65_FLAG_V | XM65_FLAG_N);
+    vm->cpu.p &= (uint8_t) ~(XM65_FLAG_C | XM65_FLAG_Z | XM65_FLAG_V | XM65_FLAG_N);
 
     if (RV > 0xFF)                                          vm->cpu.p |= XM65_FLAG_C;
     if (R == 0)                                             vm->cpu.p |= XM65_FLAG_Z;
@@ -19,7 +19,7 @@ void XM65_UpdateFlags(XM65_VM *vm, uint16_t M, uint8_t R, uint16_t RV) {
 }
 
 uint16_t XM65_ReadVector(XM65_VM *vm, uint16_t lo) {
-    return vm->ram.data[lo] | (vm->ram.data[lo + 1] << 8);
+    return vm->ram.data[lo] | (uint16_t)(vm->ram.data[lo + 1u] << 8);
 }
 
 uint8_t XM65_ReadOperand(XM65_VM *vm) {
@@ -27,11 +27,11 @@ uint8_t XM65_ReadOperand(XM65_VM *vm) {
 }
 
 uint16_t XM65_AddCarry(XM65_VM *vm, uint8_t M) {
-    return vm->cpu.a + M + ((vm->cpu.p & XM65_FLAG_C) ? 1 : 0);
+    return (uint16_t)((uint16_t)vm->cpu.a + (uint16_t)M + (vm->cpu.p & XM65_FLAG_C) ? 1u : 0u);
 }
 
 uint16_t XM65_SubstractCarry(XM65_VM *vm, uint8_t M) {
-    return vm->cpu.a - M - ((vm->cpu.p & XM65_FLAG_C) ? 0 : 1);
+    return (uint16_t)((uint16_t)vm->cpu.a - (uint16_t)M - (vm->cpu.p & XM65_FLAG_C) ? 0u : 1u);
 }
 
 void XM65_StackPush(XM65_VM *vm, uint8_t value) {
@@ -47,20 +47,20 @@ void XM65_ProgramVM(XM65_VM *vm, const char *filename) {
     XM65_OpenFile(filename, &file, &filesize);
 
     // Copying PRG memory (excluding last 6 bytes for vectors)
-    int program_size = filesize - 6;
+    int program_size = (int) filesize - 6;
     if (program_size > 0) {
         for (int i = 0; i < program_size; i++) {
-            vm->ram.data[0x0200 + i] = file[i];
+            vm->ram.data[0x0200 + i] = (uint8_t) file[i];
         }
     }
 
     // Copying VECTOR memory
-    vm->ram.data[XM65_VECTOR_IRQ     ] = file[program_size +0];
-    vm->ram.data[XM65_VECTOR_IRQ   +1] = file[program_size +1];
-    vm->ram.data[XM65_VECTOR_RESET   ] = file[program_size +2];
-    vm->ram.data[XM65_VECTOR_RESET +1] = file[program_size +3];
-    vm->ram.data[XM65_VECTOR_NMI     ] = file[program_size +4];
-    vm->ram.data[XM65_VECTOR_NMI   +1] = file[program_size +5];
+    vm->ram.data[XM65_VECTOR_IRQ     ] = (uint8_t) file[program_size +0];
+    vm->ram.data[XM65_VECTOR_IRQ   +1] = (uint8_t) file[program_size +1];
+    vm->ram.data[XM65_VECTOR_RESET   ] = (uint8_t) file[program_size +2];
+    vm->ram.data[XM65_VECTOR_RESET +1] = (uint8_t) file[program_size +3];
+    vm->ram.data[XM65_VECTOR_NMI     ] = (uint8_t) file[program_size +4];
+    vm->ram.data[XM65_VECTOR_NMI   +1] = (uint8_t) file[program_size +5];
 
     XM65_CloseFile(file);
 }

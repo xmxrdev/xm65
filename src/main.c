@@ -1,8 +1,8 @@
 #include <stdio.h>
 
-#include "cli.h"
-#include "utils.h"
-#include "vm.h"
+#include "xm65/cli.h"
+#include "xm65/utils.h"
+#include "xm65/vm.h"
 
 int main(int argc, char *argv[]) {
     XM65_Cli cli;

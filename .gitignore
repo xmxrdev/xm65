@@ -8,3 +8,7 @@ build
 # clangd
 .clangd
 compile_commands.json
+
+# gimp
+6502-opcodes.png
+6502-opcodes.xcf
