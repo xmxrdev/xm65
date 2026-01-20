@@ -146,7 +146,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        break;
                    }
         case 0x79: {
-                       M = XM65_ReadAbsolute(vm, vm->cpu.y);
+                       M = XM65_ReadAbsolute(vm, vm->cpu.y, DEREFERENCE);
                        RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
 
@@ -159,13 +159,22 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        break;
                    }
         case 0x7D: {
-                       M = XM65_ReadAbsolute(vm, vm->cpu.x);
+                       M = XM65_ReadAbsolute(vm, vm->cpu.x, DEREFERENCE);
                        RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
 
                        XM65_UpdateFlags(vm, M, R, RV);
 
                        vm->cpu.a = R;
+
+                       vm->cpu.cycles += 4;
+
+                       break;
+                   }
+        case 0x8D: {
+                       M = XM65_ReadAbsolute(vm, 0, NO_DEREFERENCE);
+
+                       vm->ram.data[M] = vm->cpu.a;
 
                        vm->cpu.cycles += 4;
 
@@ -216,7 +225,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        break;
                    }
         case 0xAD: {
-                       M = XM65_ReadAbsolute(vm, 0);
+                       M = XM65_ReadAbsolute(vm, 0, DEREFERENCE);
 
                        vm->cpu.a = (uint8_t) M;
 
@@ -250,7 +259,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        break;
                    }
         case 0xB9: {
-                       M = XM65_ReadAbsolute(vm, vm->cpu.y);
+                       M = XM65_ReadAbsolute(vm, vm->cpu.y, DEREFERENCE);
                        vm->cpu.a = (uint8_t) M;
 
                        XM65_UpdateFlags(vm, M, (uint8_t) M, RV);
@@ -260,7 +269,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        break;
                    }
         case 0xBD: {
-                       M = XM65_ReadAbsolute(vm, vm->cpu.x);
+                       M = XM65_ReadAbsolute(vm, vm->cpu.x, DEREFERENCE);
                        vm->cpu.a = (uint8_t) M;
 
                        XM65_UpdateFlags(vm, M, (uint8_t) M, RV);

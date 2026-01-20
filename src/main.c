@@ -32,6 +32,7 @@ int main(int argc, char *argv[]) {
         XM65_PrintInfo(XM65_INFO_EMULATION);
 
         vm.status = XM65_VM_STATUS_INTERRUPTED;
+        vm.status = XM65_VM_STATUS_IDLE;
 
         XM65_PrintInfo(XM65_INFO_SDL_INIT);
 
