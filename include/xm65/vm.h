@@ -50,6 +50,7 @@ void XM65_PrintCPU(XM65_VM*);
 void XM65_UpdateFlags(XM65_VM*, uint16_t, uint8_t, uint16_t);
 uint16_t XM65_ReadVector(XM65_VM*, uint16_t);
 uint8_t XM65_ReadOperand(XM65_VM*);
+uint8_t XM65_ReadIndirect(XM65_VM*, uint8_t, uint8_t);
 uint16_t XM65_AddCarry(XM65_VM*, uint8_t);
 uint16_t XM65_SubstractCarry(XM65_VM*, uint8_t);
 void XM65_ProgramVM(XM65_VM*, const char*);

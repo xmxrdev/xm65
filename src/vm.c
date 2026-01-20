@@ -26,6 +26,17 @@ uint8_t XM65_ReadOperand(XM65_VM *vm) {
     return vm->ram.data[vm->cpu.pc++];
 }
 
+uint8_t XM65_ReadIndirect(XM65_VM *vm, uint8_t OB, uint8_t OA) {
+    uint8_t ZP = XM65_ReadOperand(vm);
+    uint8_t E = (ZP + OB) & 0xFF;
+    uint16_t ADDR = vm->ram.data[E] | vm->ram.data[(E + 1) & 0xFF] << 8;
+    uint16_t MO = (ADDR + OA) & 0xFFFF;
+
+    if ((ADDR & 0xFF00) != (MO & 0xFF00)) vm->cpu.cycles += 1;
+
+    return vm->ram.data[MO];
+}
+
 uint16_t XM65_AddCarry(XM65_VM *vm, uint8_t M) {
     return (uint16_t)((uint16_t)vm->cpu.a + (uint16_t)M + (vm->cpu.p & XM65_FLAG_C) ? 1u : 0u);
 }
