@@ -14,13 +14,12 @@ target_compile_options(xm65 PRIVATE
     -Wall
     -Wextra
     -Wpedantic
-    -Werror
     -Wshadow
     -Wconversion
     -Wstrict-prototypes
 )
 
-# find_package(SDL3 REQUIRED)
+find_package(SDL3 REQUIRED)
 
 target_sources(xm65 PRIVATE
     src/main.c
@@ -34,4 +33,5 @@ target_include_directories(xm65 PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
-# target_link_libraries(xm65 PRIVATE SDL3::SDL3)
+target_link_libraries(xm65 PRIVATE SDL3::SDL3)
+target_link_libraries(xm65 PRIVATE m)

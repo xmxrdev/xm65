@@ -21,6 +21,8 @@ const char *error_strings[] = {
     "Failed to open file: '%s'.",
     "Failed to allocate memory.",
     "Failed to read file '%s' completely.",
+    "Couldn't initialize SDL: %s",
+    "Couldn't create window/renderer: %s",
 };
 
 const char *info_strings[] = {
@@ -30,6 +32,7 @@ const char *info_strings[] = {
     "Loading file '%s'...",
     "Resetting the VM...",
     "Emulation started.",
+    "Initializing SDL...",
 };
 
 bool str_ends_with(const char *str, const char *suffix) {
