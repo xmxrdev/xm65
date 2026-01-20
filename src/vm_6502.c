@@ -200,20 +200,10 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        vm->cpu.cycles += 2;
                        break;
                    }
-        case 0xEA: {
-                       vm->cpu.cycles += 2;
-                       break;
-                   }
-        case 0xD8: {
-                       vm->cpu.p &= (uint8_t) ~(XM65_FLAG_D);
-
-                       vm->cpu.cycles += 2;
-                       break;
-                   }
         case 0xA2: {
                        M = XM65_ReadOperand(vm);
                        vm->cpu.x = (uint8_t) M;
-           
+
                        XM65_UpdateFlags(vm, M, (uint8_t) M, RV);
 
                        vm->cpu.cycles += 2;
@@ -222,9 +212,19 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
         case 0xA9: {
                        M = XM65_ReadOperand(vm);
                        vm->cpu.a = (uint8_t) M;
-           
+
                        XM65_UpdateFlags(vm, M, (uint8_t) M, RV);
-           
+
+                       vm->cpu.cycles += 2;
+                       break;
+                               }
+        case 0xD8: {
+                       vm->cpu.p &= (uint8_t) ~(XM65_FLAG_D);
+
+                       vm->cpu.cycles += 2;
+                       break;
+                   }
+        case 0xEA: {
                        vm->cpu.cycles += 2;
                        break;
                    }
