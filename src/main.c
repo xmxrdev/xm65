@@ -10,17 +10,23 @@ int main(int argc, char *argv[]) {
 
     if (cli.target == NULL) XM65_ThrowError(XM65_ERROR_NO_TARGETS);
 
-    printf("INFO: Target file: %s\n", cli.target);
-    printf("INFO: Flags: %zu\n", (size_t) cli.flags);
+    XM65_PrintInfo(XM65_INFO_TARGET, cli.target);
+    XM65_PrintInfo(XM65_INFO_FLAGS, (size_t) cli.flags);
 
     if (cli.flags & XM65_CLI_EMULATE_TARGET) {
         if (!XM65_CanReadFile(cli.target)) XM65_ThrowError(XM65_ERROR_FILE_OPEN, cli.target);
 
+        XM65_PrintInfo(XM65_INFO_POWERING);
         XM65_VM vm;
         XM65_Power_VM(&vm);
+
+        XM65_PrintInfo(XM65_INFO_LOADING, cli.target);
         XM65_ProgramVM(&vm, cli.target);
+
+        XM65_PrintInfo(XM65_INFO_RESETTING);
         XM65_ResetVM(&vm);
 
+        XM65_PrintInfo(XM65_INFO_EMULATION);
         while ((vm.status != XM65_VM_STATUS_INTERRUPTED)) {
             XM65_RunVM(&vm); XM65_PrintCPU(&vm);
         }

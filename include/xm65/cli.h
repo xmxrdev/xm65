@@ -24,6 +24,15 @@ enum XM65_ERROR_CODE {
     XM65_ERROR_FILE_READ,
 };
 
+enum XM65_INFO_CODE {
+    XM65_INFO_TARGET,
+    XM65_INFO_FLAGS,
+    XM65_INFO_POWERING,
+    XM65_INFO_LOADING,
+    XM65_INFO_RESETTING,
+    XM65_INFO_EMULATION,
+};
+
 typedef struct XM65_Cli {
     const char *target;
     uint32_t flags;
@@ -31,4 +40,5 @@ typedef struct XM65_Cli {
 
 bool str_ends_with(const char*, const char*);
 void XM65_ThrowError(enum XM65_ERROR_CODE, ...);
+void XM65_PrintInfo(enum XM65_INFO_CODE, ...);
 int XM65_ParseArguments(int, char* [], XM65_Cli*);

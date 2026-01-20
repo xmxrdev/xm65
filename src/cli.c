@@ -23,6 +23,15 @@ const char *error_strings[] = {
     "Failed to read file '%s' completely.",
 };
 
+const char *info_strings[] = {
+    "Target file: '%s'.",
+    "Flags: %zu.",
+    "Powering on the VM...",
+    "Loading file '%s'...",
+    "Resetting the VM...",
+    "Emulation started.",
+};
+
 bool str_ends_with(const char *str, const char *suffix) {
     if (!str || !suffix)
         return false;
@@ -49,6 +58,18 @@ void XM65_ThrowError(enum XM65_ERROR_CODE code, ...) {
 
     printf("Use `xm65 --help E%u` for more information.\n", code);
     exit(1);
+}
+
+void XM65_PrintInfo(enum XM65_INFO_CODE code, ...) {
+    va_list args;
+
+    fputs("INFO: ", stdout);
+
+    va_start(args, code);
+    vfprintf(stdout, info_strings[code], args);
+    va_end(args);
+
+    fputs("\n", stdout);
 }
 
 int XM65_ParseArguments(int argc, char *argv[], XM65_Cli *cli) {
