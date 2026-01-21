@@ -62,7 +62,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
 
-                       XM65_UpdateFlags(vm, M, R, RV);
+                       XM65_UpdateFlags(vm, M, R, RV, XM65_FLAG_ALL);
 
                        vm->cpu.a = R;
 
@@ -87,7 +87,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
            
-                       XM65_UpdateFlags(vm, M, R, RV);
+                       XM65_UpdateFlags(vm, M, R, RV, XM65_FLAG_ALL);
            
                        vm->cpu.a = R;
            
@@ -102,7 +102,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
 
-                       XM65_UpdateFlags(vm, M, R, RV);
+                       XM65_UpdateFlags(vm, M, R, RV, XM65_FLAG_ALL);
 
                        vm->cpu.a = R;
 
@@ -116,7 +116,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
 
-                       XM65_UpdateFlags(vm, M, R, RV);
+                       XM65_UpdateFlags(vm, M, R, RV, XM65_FLAG_ALL);
 
                        vm->cpu.a = R;
 
@@ -131,7 +131,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
 
-                       XM65_UpdateFlags(vm, M, R, RV);
+                       XM65_UpdateFlags(vm, M, R, RV, XM65_FLAG_ALL);
 
                        vm->cpu.a = R;
 
@@ -150,7 +150,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
 
-                       XM65_UpdateFlags(vm, M, R, RV);
+                       XM65_UpdateFlags(vm, M, R, RV, XM65_FLAG_ALL);
 
                        vm->cpu.a = R;
 
@@ -163,7 +163,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        RV = XM65_AddCarry(vm, (uint8_t) M);
                        R = (uint8_t) RV;
 
-                       XM65_UpdateFlags(vm, M, R, RV);
+                       XM65_UpdateFlags(vm, M, R, RV, XM65_FLAG_ALL);
 
                        vm->cpu.a = R;
 
@@ -191,7 +191,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
                        vm->cpu.a = (uint8_t) M;
 
-                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV);
+                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV, XM65_FLAG_Z | XM65_FLAG_N);
 
                        vm->cpu.cycles += 5;
 
@@ -201,7 +201,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        M = XM65_ReadOperand(vm);
                        vm->cpu.x = (uint8_t) M;
 
-                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV);
+                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV, XM65_FLAG_Z | XM65_FLAG_N);
 
                        vm->cpu.cycles += 2;
                        break;
@@ -219,7 +219,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        M = XM65_ReadOperand(vm);
                        vm->cpu.a = (uint8_t) M;
 
-                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV);
+                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV, XM65_FLAG_Z | XM65_FLAG_N);
 
                        vm->cpu.cycles += 2;
                        break;
@@ -229,7 +229,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
                        vm->cpu.a = (uint8_t) M;
 
-                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV);
+                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV, XM65_FLAG_Z | XM65_FLAG_N);
 
                        vm->cpu.cycles += 4;
 
@@ -240,7 +240,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
                        vm->cpu.a = (uint8_t) M;
 
-                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV);
+                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV, XM65_FLAG_Z | XM65_FLAG_N);
 
                        vm->cpu.cycles += 5;
 
@@ -252,7 +252,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
                        vm->cpu.a = (uint8_t) M;
 
-                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV);
+                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV, XM65_FLAG_Z | XM65_FLAG_N);
 
                        vm->cpu.cycles += 4;
 
@@ -262,7 +262,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        M = XM65_ReadAbsolute(vm, vm->cpu.y, DEREFERENCE);
                        vm->cpu.a = (uint8_t) M;
 
-                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV);
+                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV, XM65_FLAG_Z | XM65_FLAG_N);
 
                        vm->cpu.cycles += 4;
 
@@ -272,7 +272,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        M = XM65_ReadAbsolute(vm, vm->cpu.x, DEREFERENCE);
                        vm->cpu.a = (uint8_t) M;
 
-                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV);
+                       XM65_UpdateFlags(vm, M, (uint8_t) M, RV, XM65_FLAG_Z | XM65_FLAG_N);
 
                        vm->cpu.cycles += 4;
 

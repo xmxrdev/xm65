@@ -9,13 +9,14 @@ void XM65_PrintCPU(XM65_VM *vm) {
     printf("A=$%X X=$%X Y=$%X\nSP=$%X PC=$%X D=$%X\nNV-BDIZC\n%s (0x%X)\n\n", vm->cpu.a, vm->cpu.x, vm->cpu.y, vm->cpu.sp, vm->cpu.pc, vm->ram.data[vm->cpu.pc], XM65_ByteToBin(vm->cpu.p), vm->cpu.p);
 }
 
-void XM65_UpdateFlags(XM65_VM *vm, uint16_t M, uint8_t R, uint16_t RV) {
-    vm->cpu.p &= (uint8_t) ~(XM65_FLAG_C | XM65_FLAG_Z | XM65_FLAG_V | XM65_FLAG_N);
-
-    if (RV > 0xFF)                                          vm->cpu.p |= XM65_FLAG_C;
-    if (R == 0)                                             vm->cpu.p |= XM65_FLAG_Z;
-    if (R & 0x80)                                           vm->cpu.p |= XM65_FLAG_N;
-    if (((~(vm->cpu.a ^ M) & (vm->cpu.a ^ R)) & 0x80) != 0) vm->cpu.p |= XM65_FLAG_V;
+void XM65_UpdateFlags(XM65_VM *vm, uint16_t M, uint8_t R, uint16_t RV, enum XM65_FLAG flags) {
+    vm->cpu.p &= (uint8_t) ~(flags & (XM65_FLAG_C | XM65_FLAG_Z | XM65_FLAG_V | XM65_FLAG_N));
+ 
+    M = M & 0xFF;
+    if ((flags & XM65_FLAG_C) && RV > 0xFF)                                          vm->cpu.p |= XM65_FLAG_C;
+    if ((flags & XM65_FLAG_Z) && R == 0)                                             vm->cpu.p |= XM65_FLAG_Z;
+    if ((flags & XM65_FLAG_V) && ((~(vm->cpu.a ^ M) & (vm->cpu.a ^ R)) & 0x80) != 0) vm->cpu.p |= XM65_FLAG_V;
+    if ((flags & XM65_FLAG_N) && R & 0x80)                                           vm->cpu.p |= XM65_FLAG_N;
 }
 
 uint16_t XM65_ReadVector(XM65_VM *vm, uint16_t lo) {
