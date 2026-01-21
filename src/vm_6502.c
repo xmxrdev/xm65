@@ -94,6 +94,13 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        vm->cpu.cycles += 2;
                        break;
                    }
+        case 0x6C: {
+                       vm->cpu.pc = XM65_ReadIndirectAbsolute(vm, NO_DEREFERENCE);
+
+                       vm->cpu.cycles += 5;
+
+                       break;
+                   }
         case 0x6D: {
                        M  = XM65_ReadOperand(vm);
                        M |= XM65_ReadOperand(vm) << 8;
