@@ -103,18 +103,30 @@ void XM65_ProgramVM(XM65_VM *vm, const char *filename) {
     XM65_CloseFile(file);
 }
 
-void XM65_Power_VM(XM65_VM *vm) {
-    /// Simulating undefined state of CPU registers and RAM contents
-    // Randomize CPU registers
-    vm->cpu.a  = (uint8_t)(rand() & 0xFF);
-    vm->cpu.x  = (uint8_t)(rand() & 0xFF);
-    vm->cpu.y  = (uint8_t)(rand() & 0xFF);
-    vm->cpu.p  = (uint8_t)(rand() & 0xFF);
-    vm->cpu.sp = (uint8_t)(rand() & 0xFF);
+void XM65_Power_VM(XM65_VM *vm, bool zero) {
+    if (zero) {
+        vm->cpu.a = 0;
+        vm->cpu.x = 0;
+        vm->cpu.y = 0;
+        vm->cpu.p = 0;
+        vm->cpu.sp = 0;
 
-    // Randomize RAM contents
-    for (size_t i = 0; i < RAM_SIZE; i++) {
-        vm->ram.data[i] = (uint8_t)(rand() & 0xFF);
+        for (size_t i = 0; i < RAM_SIZE; i++) {
+            vm->ram.data[i] = 0;
+        }
+    } else {
+        /// Simulating undefined state of CPU registers and RAM contents
+        // Randomize CPU registers
+        vm->cpu.a  = (uint8_t)(rand() & 0xFF);
+        vm->cpu.x  = (uint8_t)(rand() & 0xFF);
+        vm->cpu.y  = (uint8_t)(rand() & 0xFF);
+        vm->cpu.p  = (uint8_t)(rand() & 0xFF);
+        vm->cpu.sp = (uint8_t)(rand() & 0xFF);
+
+        // Randomize RAM contents
+        for (size_t i = 0; i < RAM_SIZE; i++) {
+            vm->ram.data[i] = (uint8_t)(rand() & 0xFF);
+        }
     }
 }
 

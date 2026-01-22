@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 
         XM65_PrintInfo(XM65_INFO_POWERING);
         XM65_VM vm;
-        XM65_Power_VM(&vm);
+        XM65_Power_VM(&vm, (bool)(cli.flags & XM65_CLI_MEMORY_ZERO));
 
         XM65_PrintInfo(XM65_INFO_LOADING, cli.target);
         XM65_ProgramVM(&vm, cli.target);

@@ -59,7 +59,7 @@ uint16_t XM65_ReadAbsolute(XM65_VM*, uint8_t, bool);
 uint16_t XM65_AddCarry(XM65_VM*, uint8_t);
 uint16_t XM65_SubstractCarry(XM65_VM*, uint8_t);
 void XM65_ProgramVM(XM65_VM*, const char*);
-void XM65_Power_VM(XM65_VM*);
+void XM65_Power_VM(XM65_VM*, bool);
 void XM65_ResetVM(XM65_VM*);
 XM65_VM_STATUS XM65_RunVM(XM65_VM*);
 void XM65_StackPush(XM65_VM*, uint8_t);

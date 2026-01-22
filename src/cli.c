@@ -10,6 +10,7 @@
 const char *options[] = {
     "--emulate",
     "--config",
+    "--zero",
     "--version",
     "--help",
     NULL,
