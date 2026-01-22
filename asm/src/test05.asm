@@ -19,6 +19,7 @@
     COLOR_RED   := %11100000
     COLOR_GREEN := %00011100
     COLOR_BLUE  := %00000011
+    COLOR_MAGENTA := %11100011
 
     lda #$20
     sta $00
@@ -41,6 +42,10 @@
 
     lda #COLOR_BLUE
     sta ($00,x) ; Store color in $fc21 indirectly
+
+    lda #COLOR_MAGENTA
+    ldy #$01
+    sta ($00),y ; Store color in $fc22 indirectly
 
 brk
 
