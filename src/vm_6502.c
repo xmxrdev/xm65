@@ -42,10 +42,28 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
                        break;
                    }
+        case 0x06: {
+                       M = XM65_ReadOperand(vm);
+
+                       vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_C)) | ((uint8_t) vm->ram.data[M] >> 7);
+                       vm->ram.data[M] <<= 1;
+
+                       vm->cpu.cycles += 5;
+
+                       break;
+                   }
         case 0x09: {
                        M = XM65_ReadOperand(vm);
 
                        vm->cpu.a |= M;
+
+                       vm->cpu.cycles += 2;
+
+                       break;
+                   }
+        case 0x0A: {
+                       vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_C)) | (vm->cpu.a >> 7);
+                       vm->cpu.a <<= 1;
 
                        vm->cpu.cycles += 2;
 
@@ -57,6 +75,16 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        vm->cpu.a |= M;
 
                        vm->cpu.cycles += 4;
+
+                       break;
+                   }
+        case 0x0E: {
+                       M = XM65_ReadAbsolute(vm, 0, NO_DEREFERENCE);
+
+                       vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_C)) | ((uint8_t) vm->ram.data[M] >> 7);
+                       vm->ram.data[M] <<= 1;
+
+                       vm->cpu.cycles += 6;
 
                        break;
                    }
@@ -75,6 +103,16 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        vm->cpu.a |= vm->ram.data[M + vm->cpu.x];
 
                        vm->cpu.cycles += 4;
+
+                       break;
+                   }
+        case 0x16: {
+                       M = XM65_ReadOperand(vm);
+
+                       vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_C)) | ((uint8_t) vm->ram.data[(M + vm->cpu.x) & 0xFF] >> 7);
+                       vm->ram.data[(M + vm->cpu.x) & 0xFF] <<= 1;
+
+                       vm->cpu.cycles += 6;
 
                        break;
                    }
@@ -99,6 +137,16 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        vm->cpu.a |= M;
 
                        vm->cpu.cycles += 4;
+
+                       break;
+                   }
+        case 0x1E: {
+                       M = XM65_ReadAbsolute(vm, vm->cpu.x, NO_DEREFERENCE);
+
+                       vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_C)) | ((uint8_t) vm->ram.data[M] >> 7);
+                       vm->ram.data[M] <<= 1;
+
+                       vm->cpu.cycles += 7;
 
                        break;
                    }
@@ -218,10 +266,28 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
                        break;
                    }
+        case 0x46: {
+                       M = XM65_ReadOperand(vm);
+
+                       vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_C)) | ((uint8_t) vm->ram.data[M] & 1);
+                       vm->ram.data[M] >>= 1;
+
+                       vm->cpu.cycles += 5;
+
+                       break;
+                   }
         case 0x49: {
                        M = XM65_ReadOperand(vm);
 
                        vm->cpu.a ^= M;
+
+                       vm->cpu.cycles += 2;
+
+                       break;
+                   }
+        case 0x4A: {
+                       vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_C)) | (vm->cpu.a & 1);
+                       vm->cpu.a >>= 1;
 
                        vm->cpu.cycles += 2;
 
@@ -242,6 +308,16 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
                        break;
                    }
+        case 0x4E: {
+                       M = XM65_ReadAbsolute(vm, 0, NO_DEREFERENCE);
+
+                       vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_C)) | ((uint8_t) vm->ram.data[M] & 1);
+                       vm->ram.data[M] >>= 1;
+
+                       vm->cpu.cycles += 6;
+
+                       break;
+                   }
         case 0x51: {
                        M = XM65_ReadIndirectOffset(vm, 0, vm->cpu.y, DEREFERENCE);
 
@@ -257,6 +333,16 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        vm->cpu.a ^= vm->ram.data[M + vm->cpu.x];
 
                        vm->cpu.cycles += 4;
+
+                       break;
+                   }
+        case 0x56: {
+                       M = XM65_ReadOperand(vm);
+
+                       vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_C)) | ((uint8_t) vm->ram.data[(M + vm->cpu.x) & 0xFF] & 1);
+                       vm->ram.data[(M + vm->cpu.x) & 0xFF] >>= 1;
+
+                       vm->cpu.cycles += 6;
 
                        break;
                    }
@@ -281,6 +367,16 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        vm->cpu.a ^= M;
 
                        vm->cpu.cycles += 4;
+
+                       break;
+                   }
+        case 0x5E: {
+                       M = XM65_ReadAbsolute(vm, vm->cpu.x, NO_DEREFERENCE);
+
+                       vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_C)) | ((uint8_t) vm->ram.data[M] & 1);
+                       vm->ram.data[M] >>= 1;
+
+                       vm->cpu.cycles += 7;
 
                        break;
                    }
