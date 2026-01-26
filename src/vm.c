@@ -65,11 +65,11 @@ uint16_t XM65_ReadAbsolute(XM65_VM *vm, uint8_t O, bool deref) {
 }
 
 uint16_t XM65_AddCarry(XM65_VM *vm, uint8_t M) {
-    return (uint16_t)((uint16_t)vm->cpu.a + (uint16_t)M + (vm->cpu.p & XM65_FLAG_C) ? 1u : 0u);
+    return (uint16_t)((uint16_t)vm->cpu.a + (uint16_t)M + ((vm->cpu.p & XM65_FLAG_C) ? 1u : 0u));
 }
 
 uint16_t XM65_SubstractCarry(XM65_VM *vm, uint8_t M) {
-    return (uint16_t)((uint16_t)vm->cpu.a - (uint16_t)M - (vm->cpu.p & XM65_FLAG_C) ? 0u : 1u);
+    return (uint16_t)((uint16_t)vm->cpu.a - (uint16_t)M - ((vm->cpu.p & XM65_FLAG_C) ? 0u : 1u));
 }
 
 void XM65_StackPush(XM65_VM *vm, uint8_t value) {

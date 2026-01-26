@@ -827,6 +827,11 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        vm->cpu.cycles += 2;
                        break;
                    }
+        case 0xE8: {
+                       vm->cpu.x++;
+                       vm->cpu.cycles += 2;
+                       break;
+                   }
         case 0xEA: {
                        vm->cpu.cycles += 2;
                        break;

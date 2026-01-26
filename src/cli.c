@@ -32,6 +32,7 @@ const char *info_strings[] = {
     "Powering on the VM...",
     "Loading file '%s'...",
     "Resetting the VM...",
+    "CPU was interrupted",
     "Emulation started.",
     "Initializing SDL...",
 };
