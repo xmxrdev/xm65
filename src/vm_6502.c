@@ -30,6 +30,18 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
                        vm->cpu.cycles += 2;
                        break;
                    }
+        case 0x20: {
+                       M = XM65_ReadAbsolute(vm, 0, NO_DEREFERENCE);
+
+                       XM65_StackPush(vm, (uint8_t)((vm->cpu.pc - 1) >> 8) & 0xFF);
+                       XM65_StackPush(vm, (uint8_t)((vm->cpu.pc - 1)       & 0xFF));
+
+                       vm->cpu.pc = M;
+
+                       vm->cpu.cycles += 6;
+
+                       break;
+                   }
         case 0x38: {
                        vm->cpu.p |= XM65_FLAG_C;
 
