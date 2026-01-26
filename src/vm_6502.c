@@ -187,6 +187,15 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
                        break;
                    }
+        case 0x84: {
+                       M = XM65_ReadOperand(vm);
+
+                       vm->ram.data[M] = vm->cpu.y;
+
+                       vm->cpu.cycles += 3;
+
+                       break;
+                   }
         case 0x85: {
                        M = XM65_ReadOperand(vm);
 
@@ -196,10 +205,37 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
                        break;
                    }
+        case 0x86: {
+                       M = XM65_ReadOperand(vm);
+
+                       vm->ram.data[M] = vm->cpu.x;
+
+                       vm->cpu.cycles += 3;
+
+                       break;
+                   }
+        case 0x8C: {
+                       M = XM65_ReadAbsolute(vm, 0, NO_DEREFERENCE);
+
+                       vm->ram.data[M] = vm->cpu.y;
+
+                       vm->cpu.cycles += 4;
+
+                       break;
+                   }
         case 0x8D: {
                        M = XM65_ReadAbsolute(vm, 0, NO_DEREFERENCE);
 
                        vm->ram.data[M] = vm->cpu.a;
+
+                       vm->cpu.cycles += 4;
+
+                       break;
+                   }
+        case 0x8E: {
+                       M = XM65_ReadAbsolute(vm, 0, NO_DEREFERENCE);
+
+                       vm->ram.data[M] = vm->cpu.x;
 
                        vm->cpu.cycles += 4;
 
@@ -214,10 +250,29 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
                        break;
                    }
+
+        case 0x94: {
+                       M = XM65_ReadOperand(vm);
+
+                       vm->ram.data[M + vm->cpu.x] = vm->cpu.y;
+
+                       vm->cpu.cycles += 4;
+
+                       break;
+                   }
         case 0x95: {
                        M = XM65_ReadOperand(vm);
 
                        vm->ram.data[M + vm->cpu.x] = vm->cpu.a;
+
+                       vm->cpu.cycles += 4;
+
+                       break;
+                   }
+        case 0x96: {
+                       M = XM65_ReadOperand(vm);
+
+                       vm->ram.data[M + vm->cpu.y] = vm->cpu.x;
 
                        vm->cpu.cycles += 4;
 
