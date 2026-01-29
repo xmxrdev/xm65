@@ -7,7 +7,7 @@
 #define DEREFERENCE true
 #define NO_DEREFERENCE false
 
-enum XM65_FLAG {
+typedef enum {
     XM65_FLAG_C = 1u << 0,
     XM65_FLAG_Z = 1u << 1,
     XM65_FLAG_I = 1u << 2,
@@ -16,8 +16,10 @@ enum XM65_FLAG {
     XM65_FLAG_U = 1u << 5,
     XM65_FLAG_V = 1u << 6,
     XM65_FLAG_N = 1u << 7,
-    XM65_FLAG_ALL = 0xFF,
-};
+    XM65_FLAGS_NONE = 0,
+    XM65_FLAGS_ALL = XM65_FLAG_C | XM65_FLAG_Z | XM65_FLAG_V | XM65_FLAG_N,
+    XM65_FLAGS_ZN = XM65_FLAG_Z | XM65_FLAG_N,
+} XM65_FLAG;
 
 enum {
     XM65_VECTOR_NMI   = 0xFFFA,
@@ -257,7 +259,7 @@ typedef struct XM65_VM {
 } XM65_VM;
 
 void XM65_PrintCPU(XM65_VM*);
-void XM65_UpdateFlags(XM65_VM*, uint16_t, uint8_t, uint16_t, enum XM65_FLAG);
+void XM65_UpdateFlags(XM65_VM*, uint16_t, uint16_t, XM65_FLAG);
 uint16_t XM65_ReadVector(XM65_VM*, uint16_t);
 uint8_t XM65_ReadOperand(XM65_VM*);
 uint16_t XM65_ReadIndirectOffset(XM65_VM*, uint8_t, uint8_t, bool);
