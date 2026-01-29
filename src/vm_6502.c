@@ -120,6 +120,15 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
         case XM65_OPCODE_STY_ZPG: { M = XM65_ReadOperand(vm); vm->ram.data[M] = vm->cpu.y; vm->cpu.cycles += 3; break; }
         case XM65_OPCODE_STY_ZPG_X: { M = XM65_ReadOperand(vm); vm->ram.data[M + vm->cpu.x] = vm->cpu.y; vm->cpu.cycles += 4; break; }
         case XM65_OPCODE_STY_ABS: { M = XM65_ReadAbsolute(vm, 0, NO_DEREFERENCE); vm->ram.data[M] = vm->cpu.y; vm->cpu.cycles += 4; break; }
+
+        case XM65_OPCODE_SBC_IMM: { flags = XM65_FLAGS_ALL; M = XM65_ReadOperand(vm); R = XM65_SubstractCarry(vm, (uint8_t)M); vm->cpu.a = (uint8_t)R; vm->cpu.cycles += 2; break; }
+        case XM65_OPCODE_SBC_ZPG: { flags = XM65_FLAGS_ALL; M = XM65_ReadOperand(vm); M = vm->ram.data[M]; R = XM65_SubstractCarry(vm, (uint8_t)M); vm->cpu.a = (uint8_t)R; vm->cpu.cycles += 3; break; }
+        case XM65_OPCODE_SBC_ZPG_X: { flags = XM65_FLAGS_ALL; M = XM65_ReadOperand(vm); M = vm->ram.data[M + vm->cpu.x]; R = XM65_SubstractCarry(vm, (uint8_t)M); vm->cpu.a = (uint8_t)R; vm->cpu.cycles += 4; break; }
+        case XM65_OPCODE_SBC_ABS: { flags = XM65_FLAGS_ALL; M = XM65_ReadAbsolute(vm, 0, DEREFERENCE); R = XM65_SubstractCarry(vm, (uint8_t)M); vm->cpu.a = (uint8_t)R; vm->cpu.cycles += 4; break; }
+        case XM65_OPCODE_SBC_ABS_Y: { flags = XM65_FLAGS_ALL; M = XM65_ReadAbsolute(vm, vm->cpu.y, DEREFERENCE); R = XM65_SubstractCarry(vm, (uint8_t)M); vm->cpu.a = (uint8_t)R; vm->cpu.cycles += 4; break; }
+        case XM65_OPCODE_SBC_ABS_X: { flags = XM65_FLAGS_ALL; M = XM65_ReadAbsolute(vm, vm->cpu.x, DEREFERENCE); R = XM65_SubstractCarry(vm, (uint8_t)M); vm->cpu.a = (uint8_t)R; vm->cpu.cycles += 4; break; }
+        case XM65_OPCODE_SBC_IND_X: { flags = XM65_FLAGS_ALL; M = XM65_ReadIndirectOffset(vm, vm->cpu.x, 0, DEREFERENCE); R = XM65_SubstractCarry(vm, (uint8_t)M); vm->cpu.a = (uint8_t)R; vm->cpu.cycles += 6; break; }
+        case XM65_OPCODE_SBC_IND_Y: { flags = XM65_FLAGS_ALL; M = XM65_ReadIndirectOffset(vm, 0, vm->cpu.y, DEREFERENCE); R = XM65_SubstractCarry(vm, (uint8_t)M); vm->cpu.a = (uint8_t)R; vm->cpu.cycles += 5; break; }
     }
 
     XM65_UpdateFlags(vm, M, R, flags);
