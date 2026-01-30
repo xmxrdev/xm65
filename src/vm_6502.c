@@ -53,6 +53,7 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
         case XM65_OPCODE_EOR_IND_Y: { flags = XM65_FLAGS_ZN; M = XM65_ReadIndirectOffset(vm, 0, vm->cpu.y, DEREFERENCE); vm->cpu.a ^= M; vm->cpu.cycles += 5; break; }
 
         case XM65_OPCODE_INX_IMP: { flags = XM65_FLAGS_ZN; vm->cpu.x++; R = vm->cpu.x; vm->cpu.cycles += 2; break; }
+        case XM65_OPCODE_INY_IMP: { flags = XM65_FLAGS_ZN; vm->cpu.y++; R = vm->cpu.y; vm->cpu.cycles += 2; break; }
 
         case XM65_OPCODE_JMP_ABS: { vm->cpu.pc = XM65_ReadVector(vm, vm->cpu.pc); vm->cpu.cycles += 3; break; }
         case XM65_OPCODE_JMP_IND: { vm->cpu.pc = XM65_ReadIndirectAbsolute(vm, NO_DEREFERENCE); vm->cpu.cycles += 5; break; }
