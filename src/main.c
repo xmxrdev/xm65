@@ -72,11 +72,13 @@ int main(int argc, char *argv[]) {
             }
 
 
-            if (vm.status != XM65_VM_STATUS_INTERRUPTED) XM65_RunVM(&vm);
+            if (vm.status != XM65_VM_STATUS_INTERRUPTED) {
+                XM65_RunVM(&vm);
+            }
 
             SDL_GetWindowSize(window, &screen_width, &screen_height);
 
-            SDL_SetRenderDrawColor(renderer, 0x10, 0x10, 0x10, SDL_ALPHA_OPAQUE);
+            SDL_SetRenderDrawColor(renderer, 0x20, 0x20, 0x20, SDL_ALPHA_OPAQUE);
             SDL_RenderClear(renderer);
 
             uint8_t *pixels;

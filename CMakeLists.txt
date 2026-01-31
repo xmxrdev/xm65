@@ -17,6 +17,7 @@ target_compile_options(xm65 PRIVATE
     -Wshadow
     -Wconversion
     -Wstrict-prototypes
+    -O3
 )
 
 find_package(SDL3 REQUIRED)
