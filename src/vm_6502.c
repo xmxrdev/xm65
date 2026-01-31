@@ -164,6 +164,8 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
         case XM65_OPCODE_RTI_IMP: { vm->cpu.p = XM65_StackPull(vm) | XM65_FLAG_U; vm->cpu.pc  = XM65_StackPull(vm); vm->cpu.pc |= XM65_StackPull(vm) << 8; vm->cpu.cycles += 6; break; }
 
+        case XM65_OPCODE_RTS_IMP: { vm->cpu.pc  = XM65_StackPull(vm); vm->cpu.pc |= XM65_StackPull(vm) << 8; vm->cpu.pc++; vm->cpu.cycles += 6; break; }
+
         case XM65_OPCODE_SEC_IMP: { vm->cpu.p |= XM65_FLAG_C; vm->cpu.cycles += 2; break; }
 
         case XM65_OPCODE_SED_IMP: { vm->cpu.p |= XM65_FLAG_D; vm->cpu.cycles += 2; break; }
