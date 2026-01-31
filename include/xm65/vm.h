@@ -262,6 +262,7 @@ void XM65_PrintCPU(XM65_VM*);
 void XM65_UpdateFlags(XM65_VM*, uint16_t, uint16_t, XM65_FLAG);
 uint16_t XM65_ReadVector(XM65_VM*, uint16_t);
 uint8_t XM65_ReadOperand(XM65_VM*);
+uint16_t XM65_ReadRelative(XM65_VM*);
 uint16_t XM65_ReadIndirectOffset(XM65_VM*, uint8_t, uint8_t, bool);
 uint16_t XM65_ReadIndirectAbsolute(XM65_VM*, bool);
 uint16_t XM65_ReadAbsolute(XM65_VM*, uint8_t, bool);

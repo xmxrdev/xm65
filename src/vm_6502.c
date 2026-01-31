@@ -35,10 +35,26 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
         case XM65_OPCODE_ASL_ABS: { flags = XM65_FLAGS_ZN; M = XM65_ReadAbsolute(vm, 0, NO_DEREFERENCE); vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_C)) | ((uint8_t) vm->ram.data[M] >> 7); vm->ram.data[M] <<= 1; vm->cpu.cycles += 6; break; }
         case XM65_OPCODE_ASL_ABS_X: { flags = XM65_FLAGS_ZN; M = XM65_ReadAbsolute(vm, vm->cpu.x, NO_DEREFERENCE); vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_C)) | ((uint8_t) vm->ram.data[M] >> 7); vm->ram.data[M] <<= 1; vm->cpu.cycles += 7; break; }
 
+        case XM65_OPCODE_BCC_REL: { if ((vm->cpu.p & XM65_FLAG_C) == 0) { M = XM65_ReadRelative(vm); vm->cpu.pc = M; vm->cpu.cycles++; } vm->cpu.cycles += 2; break; }
+
+        case XM65_OPCODE_BCS_REL: { if ((vm->cpu.p & XM65_FLAG_C) != 0) { M = XM65_ReadRelative(vm); vm->cpu.pc = M; vm->cpu.cycles++; } vm->cpu.cycles += 2; break; }
+
+        case XM65_OPCODE_BEQ_REL: { if ((vm->cpu.p & XM65_FLAG_Z) != 0) { M = XM65_ReadRelative(vm); vm->cpu.pc = M; vm->cpu.cycles++; } vm->cpu.cycles += 2; break; }
+
         case XM65_OPCODE_BIT_ZPG: { flags = XM65_FLAGS_ZN; M = XM65_ReadOperand(vm); R = vm->cpu.a & (uint8_t)vm->ram.data[M]; vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_V)) | (R & XM65_FLAG_V); vm->cpu.cycles += 3; }
         case XM65_OPCODE_BIT_ABS: { flags = XM65_FLAGS_ZN; M = XM65_ReadAbsolute(vm, 0, DEREFERENCE); R = vm->cpu.a & (uint8_t)M; vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_V)) | (R & XM65_FLAG_V); vm->cpu.cycles += 3; }
 
+        case XM65_OPCODE_BMI_REL: { if ((vm->cpu.p & XM65_FLAG_N) != 0) { M = XM65_ReadRelative(vm); vm->cpu.pc = M; vm->cpu.cycles++; } vm->cpu.cycles += 2; break; }
+
+        case XM65_OPCODE_BNE_REL: { if ((vm->cpu.p & XM65_FLAG_Z) == 0) { M = XM65_ReadRelative(vm); vm->cpu.pc = M; vm->cpu.cycles++; } vm->cpu.cycles += 2; break; }
+
+        case XM65_OPCODE_BPL_REL: { if ((vm->cpu.p & XM65_FLAG_N) == 0) { M = XM65_ReadRelative(vm); vm->cpu.pc = M; vm->cpu.cycles++; } vm->cpu.cycles += 2; break; }
+
         case XM65_OPCODE_BRK_IMP: { vm->cpu.pc += 1; XM65_StackPush(vm, (uint8_t)(vm->cpu.pc & 0xFF00) >> 8); XM65_StackPush(vm, (uint8_t)(vm->cpu.pc & 0x00FF)); XM65_StackPush(vm, (vm->cpu.p | XM65_FLAG_B | XM65_FLAG_U)); vm->cpu.pc = XM65_ReadVector(vm, XM65_VECTOR_IRQ); vm->cpu.cycles += 7; vm->status = XM65_VM_STATUS_INTERRUPTED; break; }
+
+        case XM65_OPCODE_BVC_REL: { if ((vm->cpu.p & XM65_FLAG_V) == 0) { M = XM65_ReadRelative(vm); vm->cpu.pc = M; vm->cpu.cycles++; } vm->cpu.cycles += 2; break; }
+
+        case XM65_OPCODE_BVS_REL: { if ((vm->cpu.p & XM65_FLAG_V) != 0) { M = XM65_ReadRelative(vm); vm->cpu.pc = M; vm->cpu.cycles++; } vm->cpu.cycles += 2; break; }
 
         case XM65_OPCODE_CLC_IMP: { vm->cpu.p &= (uint8_t) ~(XM65_FLAG_C); vm->cpu.cycles += 2; break; }
 

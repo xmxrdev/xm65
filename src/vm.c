@@ -27,6 +27,16 @@ uint8_t XM65_ReadOperand(XM65_VM *vm) {
     return vm->ram.data[vm->cpu.pc++];
 }
 
+uint16_t XM65_ReadRelative(XM65_VM *vm) {
+    int8_t O = (int8_t)vm->ram.data[vm->cpu.pc++];
+
+    if ((vm->cpu.pc & 0xFF00) != ((vm->cpu.pc + O) & 0xFF00)) {
+        vm->cpu.cycles++;
+    }
+
+    return (uint16_t)(vm->cpu.pc + O);
+}
+
 uint16_t XM65_ReadIndirectOffset(XM65_VM *vm, uint8_t OB, uint8_t OA, bool deref) {
     uint8_t ZP = XM65_ReadOperand(vm);
     uint8_t E = (ZP + OB) & 0xFF;
