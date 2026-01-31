@@ -150,6 +150,14 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
         case XM65_OPCODE_ORA_IND_X: { flags = XM65_FLAGS_ZN; M = XM65_ReadIndirectOffset(vm, vm->cpu.x, 0, DEREFERENCE); vm->cpu.a |= M; R = vm->cpu.a; vm->cpu.cycles += 6; break; }
         case XM65_OPCODE_ORA_IND_Y: { flags = XM65_FLAGS_ZN; M = XM65_ReadIndirectOffset(vm, 0, vm->cpu.y, DEREFERENCE); vm->cpu.a |= M; R = vm->cpu.a; vm->cpu.cycles += 5; break; }
 
+        case XM65_OPCODE_PHA_IMP: { XM65_StackPush(vm, vm->cpu.a); vm->cpu.cycles += 3; break; }
+
+        case XM65_OPCODE_PHP_IMP: { XM65_StackPush(vm, vm->cpu.p); vm->cpu.cycles += 3; break; }
+
+        case XM65_OPCODE_PLA_IMP: { flags = XM65_FLAGS_ZN; vm->cpu.a = XM65_StackPull(vm); R = vm->cpu.a; vm->cpu.cycles += 4; break; }
+
+        case XM65_OPCODE_PLP_IMP: { vm->cpu.p = XM65_StackPull(vm); vm->cpu.cycles += 4; break; }
+
         case XM65_OPCODE_ROL_A: { flags = XM65_FLAGS_ZN; uint8_t old_p = vm->cpu.p; vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_C)) | (vm->cpu.a >> 7); vm->cpu.a = (uint8_t)(vm->cpu.a << 1) | ((old_p & XM65_FLAG_C) ? 1u : 0u); vm->cpu.cycles += 2; break; }
         case XM65_OPCODE_ROL_ZPG: { flags = XM65_FLAGS_ZN; M = XM65_ReadOperand(vm); uint8_t old_p = vm->cpu.p; vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_C)) | (vm->ram.data[M] >> 7); vm->ram.data[M] = (uint8_t)(vm->ram.data[M] << 1) | ((old_p & XM65_FLAG_C) ? 1u : 0u); vm->cpu.cycles += 5; }
         case XM65_OPCODE_ROL_ZPG_X: { flags = XM65_FLAGS_ZN; M = XM65_ReadOperand(vm); uint8_t old_p = vm->cpu.p; vm->cpu.p = (vm->cpu.p & ~(XM65_FLAG_C)) | (vm->ram.data[M + vm->cpu.x] >> 7); vm->ram.data[M + vm->cpu.x] = (uint8_t)(vm->ram.data[M + vm->cpu.x] << 1) | ((old_p & XM65_FLAG_C) ? 1u : 0u); vm->cpu.cycles += 6; break; }
