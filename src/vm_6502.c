@@ -62,6 +62,8 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
         case XM65_OPCODE_CLI_IMP: { vm->cpu.p &= (uint8_t) ~(XM65_FLAG_I); vm->cpu.cycles += 2; break; }
 
+        case XM65_OPCODE_CLV_IMP: { vm->cpu.p &= (uint8_t) ~(XM65_FLAG_V); vm->cpu.cycles += 2; break; }
+
         case XM65_OPCODE_CMP_IMM: { flags = XM65_FLAG_C | XM65_FLAG_Z | XM65_FLAG_N; M = XM65_ReadOperand(vm); vm->cpu.p |= XM65_FLAG_C; R = XM65_SubstractCarry(vm, (uint8_t)M); vm->cpu.cycles += 2; break; }
         case XM65_OPCODE_CMP_ZPG: { flags = XM65_FLAG_C | XM65_FLAG_Z | XM65_FLAG_N; M = XM65_ReadOperand(vm); vm->cpu.p |= XM65_FLAG_C; R = XM65_SubstractCarry(vm, vm->ram.data[M]); vm->cpu.cycles += 3; break; }
         case XM65_OPCODE_CMP_ZPG_X: { flags = XM65_FLAG_C | XM65_FLAG_Z | XM65_FLAG_N; M = XM65_ReadOperand(vm); vm->cpu.p |= XM65_FLAG_C; R = XM65_SubstractCarry(vm, vm->ram.data[(M + vm->cpu.x) & 0xFF]); vm->cpu.cycles += 4; break; }
@@ -83,6 +85,10 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
         case XM65_OPCODE_DEC_ZPG_X: { M = XM65_ReadOperand(vm); vm->ram.data[M + vm->cpu.x]--; R = vm->ram.data[M + vm->cpu.x]; vm->cpu.cycles += 6; break; }
         case XM65_OPCODE_DEC_ABS: { M = XM65_ReadAbsolute(vm, 0, NO_DEREFERENCE); vm->ram.data[M]--; R = vm->ram.data[M]; vm->cpu.cycles += 6; break; }
         case XM65_OPCODE_DEC_ABS_X: { M = XM65_ReadAbsolute(vm, vm->cpu.x, NO_DEREFERENCE); vm->ram.data[M]--; R = vm->ram.data[M]; vm->cpu.cycles += 7; break; }
+
+        case XM65_OPCODE_DEX_IMP: { flags = XM65_FLAGS_ZN; vm->cpu.x--; R = vm->cpu.x; vm->cpu.cycles += 2; break; }
+
+        case XM65_OPCODE_DEY_IMP: { flags = XM65_FLAGS_ZN; vm->cpu.y--; R = vm->cpu.y; vm->cpu.cycles += 2; break; }
 
         case XM65_OPCODE_EOR_IMM: { flags = XM65_FLAGS_ZN; M = XM65_ReadOperand(vm); vm->cpu.a ^= M; vm->cpu.cycles += 2; break; }
         case XM65_OPCODE_EOR_ZPG: { flags = XM65_FLAGS_ZN; M = XM65_ReadOperand(vm); vm->cpu.a ^= vm->ram.data[M]; vm->cpu.cycles += 3; break; }
@@ -159,6 +165,8 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
         case XM65_OPCODE_RTI_IMP: { vm->cpu.p = XM65_StackPull(vm) | XM65_FLAG_U; vm->cpu.pc  = XM65_StackPull(vm); vm->cpu.pc |= XM65_StackPull(vm) << 8; vm->cpu.cycles += 6; break; }
 
         case XM65_OPCODE_SEC_IMP: { vm->cpu.p |= XM65_FLAG_C; vm->cpu.cycles += 2; break; }
+
+        case XM65_OPCODE_SED_IMP: { vm->cpu.p |= XM65_FLAG_D; vm->cpu.cycles += 2; break; }
 
         case XM65_OPCODE_SEI_IMP: { vm->cpu.p |= XM65_FLAG_I; vm->cpu.cycles += 2; break; }
 
