@@ -180,8 +180,6 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
 
         case XM65_OPCODE_SEI_IMP: { vm->cpu.p |= XM65_FLAG_I; vm->cpu.cycles += 2; break; }
 
-        case XM65_OPCODE_TXS_IMP: { flags = XM65_FLAGS_ZN; vm->cpu.sp = vm->cpu.x; R = vm->cpu.x; vm->cpu.cycles += 2; break; }
-
         case XM65_OPCODE_STA_ZPG: { M = XM65_ReadOperand(vm); vm->ram.data[M] = vm->cpu.a; vm->cpu.cycles += 3; break; }
         case XM65_OPCODE_STA_ZPG_X: { M = XM65_ReadOperand(vm); vm->ram.data[M + vm->cpu.x] = vm->cpu.a; vm->cpu.cycles += 4; break; }
         case XM65_OPCODE_STA_ABS: { M = XM65_ReadAbsolute(vm, 0, NO_DEREFERENCE); vm->ram.data[M] = vm->cpu.a; vm->cpu.cycles += 4; break; }
@@ -197,6 +195,18 @@ XM65_VM_STATUS XM65_RunVM(XM65_VM *vm) {
         case XM65_OPCODE_STY_ZPG: { M = XM65_ReadOperand(vm); vm->ram.data[M] = vm->cpu.y; vm->cpu.cycles += 3; break; }
         case XM65_OPCODE_STY_ZPG_X: { M = XM65_ReadOperand(vm); vm->ram.data[M + vm->cpu.x] = vm->cpu.y; vm->cpu.cycles += 4; break; }
         case XM65_OPCODE_STY_ABS: { M = XM65_ReadAbsolute(vm, 0, NO_DEREFERENCE); vm->ram.data[M] = vm->cpu.y; vm->cpu.cycles += 4; break; }
+
+        case XM65_OPCODE_TAX_IMP: { flags = XM65_FLAGS_ZN; vm->cpu.x = vm->cpu.a; R = vm->cpu.x; vm->cpu.cycles += 2; break; }
+
+        case XM65_OPCODE_TAY_IMP: { flags = XM65_FLAGS_ZN; vm->cpu.y = vm->cpu.a; R = vm->cpu.y; vm->cpu.cycles += 2; break; }
+
+        case XM65_OPCODE_TSX_IMP: { flags = XM65_FLAGS_ZN; vm->cpu.x = vm->cpu.sp; R = vm->cpu.x; vm->cpu.cycles += 2; break; }
+
+        case XM65_OPCODE_TXA_IMP: { flags = XM65_FLAGS_ZN; vm->cpu.a = vm->cpu.x; R = vm->cpu.a; vm->cpu.cycles += 2; break; }
+
+        case XM65_OPCODE_TXS_IMP: { vm->cpu.sp = vm->cpu.x; vm->cpu.cycles += 2; break; }
+
+        case XM65_OPCODE_TYA_IMP: { flags = XM65_FLAGS_ZN; vm->cpu.a = vm->cpu.y; R = vm->cpu.a; vm->cpu.cycles += 2; break; }
 
         case XM65_OPCODE_SBC_IMM: { flags = XM65_FLAGS_ALL; M = XM65_ReadOperand(vm); R = XM65_SubstractCarry(vm, (uint8_t)M); vm->cpu.a = (uint8_t)R; vm->cpu.cycles += 2; break; }
         case XM65_OPCODE_SBC_ZPG: { flags = XM65_FLAGS_ALL; M = XM65_ReadOperand(vm); M = vm->ram.data[M]; R = XM65_SubstractCarry(vm, (uint8_t)M); vm->cpu.a = (uint8_t)R; vm->cpu.cycles += 3; break; }
