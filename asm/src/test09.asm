@@ -1,5 +1,9 @@
 .setcpu "6502"
 
+; This program will generate a pseudorandom pattern in the screen. The LFSR (random number generator)
+; is software based, however it will be implemented as a hardware & memory-mapped IO, to ensure the
+; numbers are __more__ random.
+
 .org $0200
 
 lda #1
