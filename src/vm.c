@@ -5,11 +5,11 @@
 #include "xm65/vm.h"
 #include "xm65/utils.h"
 
-void XM65_PrintCPU(XM65_VM *vm) {
+extern inline void XM65_PrintCPU(XM65_VM *vm) {
     printf("A=$%X X=$%X Y=$%X\nSP=$%X PC=$%X D=$%X\nNV-BDIZC\n%s (0x%X)\n\n", vm->cpu.a, vm->cpu.x, vm->cpu.y, vm->cpu.sp, vm->cpu.pc, vm->ram.data[vm->cpu.pc], XM65_ByteToBin(vm->cpu.p), vm->cpu.p);
 }
 
-void XM65_UpdateFlags(XM65_VM *vm, uint16_t M, uint16_t R, XM65_FLAG flags) {
+extern inline void XM65_UpdateFlags(XM65_VM *vm, uint16_t M, uint16_t R, XM65_FLAG flags) {
     vm->cpu.p &= (uint8_t) ~(flags);
  
     M = M & 0xFF;
@@ -19,15 +19,15 @@ void XM65_UpdateFlags(XM65_VM *vm, uint16_t M, uint16_t R, XM65_FLAG flags) {
     if ((flags & XM65_FLAG_N) && (R & 0xFF) & 0x80)                                           vm->cpu.p |= XM65_FLAG_N;
 }
 
-uint16_t XM65_ReadVector(XM65_VM *vm, uint16_t lo) {
+extern inline uint16_t XM65_ReadVector(XM65_VM *vm, uint16_t lo) {
     return vm->ram.data[lo] | (uint16_t)(vm->ram.data[lo + 1u] << 8);
 }
 
-uint8_t XM65_ReadOperand(XM65_VM *vm) {
+extern inline uint8_t XM65_ReadOperand(XM65_VM *vm) {
     return vm->ram.data[vm->cpu.pc++];
 }
 
-uint16_t XM65_ReadRelative(XM65_VM *vm) {
+extern inline uint16_t XM65_ReadRelative(XM65_VM *vm) {
     int8_t O = (int8_t)vm->ram.data[vm->cpu.pc++];
 
     if ((vm->cpu.pc & 0xFF00) != ((vm->cpu.pc + O) & 0xFF00)) {
@@ -37,7 +37,7 @@ uint16_t XM65_ReadRelative(XM65_VM *vm) {
     return (uint16_t)(vm->cpu.pc + O);
 }
 
-uint16_t XM65_ReadIndirectOffset(XM65_VM *vm, uint8_t OB, uint8_t OA, bool deref) {
+extern inline uint16_t XM65_ReadIndirectOffset(XM65_VM *vm, uint8_t OB, uint8_t OA, bool deref) {
     uint8_t ZP = XM65_ReadOperand(vm);
     uint8_t E = (ZP + OB) & 0xFF;
     uint16_t ADDR;
@@ -50,7 +50,7 @@ uint16_t XM65_ReadIndirectOffset(XM65_VM *vm, uint8_t OB, uint8_t OA, bool deref
     return deref ? vm->ram.data[MO] : MO;
 }
 
-uint16_t XM65_ReadIndirectAbsolute(XM65_VM *vm, bool deref) {
+extern inline uint16_t XM65_ReadIndirectAbsolute(XM65_VM *vm, bool deref) {
     uint16_t ADDR;
     ADDR  = XM65_ReadOperand(vm);
     ADDR |= XM65_ReadOperand(vm) << 8;
@@ -61,7 +61,7 @@ uint16_t XM65_ReadIndirectAbsolute(XM65_VM *vm, bool deref) {
     return deref ? vm->ram.data[E] : E;
 }
 
-uint16_t XM65_ReadAbsolute(XM65_VM *vm, uint8_t O, bool deref) {
+extern inline uint16_t XM65_ReadAbsolute(XM65_VM *vm, uint8_t O, bool deref) {
     uint16_t ADDR;
     ADDR = XM65_ReadOperand(vm);
     ADDR |= XM65_ReadOperand(vm) << 8;
@@ -74,19 +74,19 @@ uint16_t XM65_ReadAbsolute(XM65_VM *vm, uint8_t O, bool deref) {
     return V;
 }
 
-uint16_t XM65_AddCarry(XM65_VM *vm, uint8_t M) {
+extern inline uint16_t XM65_AddCarry(XM65_VM *vm, uint8_t M) {
     return (uint16_t)((uint16_t)vm->cpu.a + (uint16_t)M + ((vm->cpu.p & XM65_FLAG_C) ? 1u : 0u));
 }
 
-uint16_t XM65_SubstractCarry(XM65_VM *vm, uint8_t M) {
+extern inline uint16_t XM65_SubstractCarry(XM65_VM *vm, uint8_t M) {
     return (uint16_t)((uint16_t)vm->cpu.a - (uint16_t)M - ((vm->cpu.p & XM65_FLAG_C) ? 0u : 1u));
 }
 
-void XM65_StackPush(XM65_VM *vm, uint8_t value) {
+extern inline void XM65_StackPush(XM65_VM *vm, uint8_t value) {
     vm->ram.data[0x0100 + vm->cpu.sp--] = value;
 }
 
-uint8_t XM65_StackPull(XM65_VM *vm) {
+extern inline uint8_t XM65_StackPull(XM65_VM *vm) {
     return vm->ram.data[0x0100 + ++vm->cpu.sp];
 }
 
